@@ -1,4 +1,5 @@
 import {
+    getAI,
     getVertexAI,
     getGenerativeModel,
     GenerativeModel,
@@ -10,15 +11,26 @@ import {
 import { initializeApp } from "firebase/app";
 
 
+// following is config of a project which has google ai enabled
 const firebaseConfig = {
-    apiKey: "AIzaSyBkbX6tPnHiVPU93FgfXdWHUDpcHp01tOc",
-    authDomain: "sid-test-web-hybrid.firebaseapp.com",
-    projectId: "sid-test-web-hybrid",
-    storageBucket: "sid-test-web-hybrid.firebasestorage.app",
-    messagingSenderId: "638382767496",
-    appId: "1:638382767496:web:5c0388e8a91f583c02ce3d",
-    measurementId: "G-Q6GFKMSFBC"
-};
+    apiKey: "AIzaSyCI_e1wo0T-SUbjKJU0LzI1kGOYvEDTnSE",
+    authDomain: "vertexaiinfirebase-test.firebaseapp.com",
+    projectId: "vertexaiinfirebase-test",
+    storageBucket: "vertexaiinfirebase-test.firebasestorage.app",
+    messagingSenderId: "857620473716",
+    appId: "1:857620473716:web:8c803ada68ede9b2bb6e21"
+  };
+
+// the following is config for Sid's project - it has vertexai enabled but not google ai
+// const firebaseConfig = {
+//     apiKey: "AIzaSyBkbX6tPnHiVPU93FgfXdWHUDpcHp01tOc",
+//     authDomain: "sid-test-web-hybrid.firebaseapp.com",
+//     projectId: "sid-test-web-hybrid",
+//     storageBucket: "sid-test-web-hybrid.firebasestorage.app",
+//     messagingSenderId: "638382767496",
+//     appId: "1:638382767496:web:5c0388e8a91f583c02ce3d",
+//     measurementId: "G-Q6GFKMSFBC"
+// };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -26,15 +38,30 @@ const app = initializeApp(firebaseConfig);
 // Initialize the Vertex AI service
 const vertexAI = getVertexAI(app);
 
-const inCloudOnlyModel = getGenerativeModel(vertexAI, {
+const vertexAiInCloudOnlyModel = getGenerativeModel(vertexAI, {
     mode: 'only_in_cloud',
 });
 
-const onDeviceOnlyModel = getGenerativeModel(vertexAI, {
+const vertexAiOnDeviceOnlyModel = getGenerativeModel(vertexAI, {
     mode: 'only_on_device',
 });
 
-const hybridModel = getGenerativeModel(vertexAI, {
+const vertexAiHybridModel = getGenerativeModel(vertexAI, {
+    mode: 'prefer_on_device',
+});
+
+// Initialize the GoogleAI
+const googleAI = getAI(app); 
+
+const googleAiInCloudOnlyModel = getGenerativeModel(googleAI, {
+    mode: 'only_in_cloud',
+});
+
+const googleAiOnDeviceOnlyModel = getGenerativeModel(googleAI, {
+    mode: 'only_on_device',
+});
+
+const googleAiHybridModel = getGenerativeModel(googleAI, {
     mode: 'prefer_on_device',
 });
 
@@ -120,32 +147,66 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Add textOnly listeners
     bTextOnlyOnDevice.addEventListener('click', () => {
+        const selectedRadioButton = document.querySelector('input[name="backend"]:checked') as HTMLInputElement
         console.log("Text Only On Device Only Inference.")
-        textOnlyInference(onDeviceOnlyModel);
+        if (selectedRadioButton.value == "googleai") {
+            textOnlyInference(googleAiOnDeviceOnlyModel);
+        } else {
+            textOnlyInference(vertexAiOnDeviceOnlyModel);
+        }
     });
     bTextOnlyInCloud.addEventListener('click', () => {
-        console.log("Text Only In Cloud Only Inference.")
-        textOnlyInference(inCloudOnlyModel);
+        const selectedRadioButton = document.querySelector('input[name="backend"]:checked') as HTMLInputElement
+        if (selectedRadioButton.value == "googleai") {
+            console.log("Text Only In Cloud Only Inference Using Google AI Backend.")
+            textOnlyInference(googleAiInCloudOnlyModel);
+        } else {
+            console.log("Text Only In Cloud Only Inference Using Vertex AI Backend.")
+            textOnlyInference(vertexAiInCloudOnlyModel);
+        }
     });
     bTextOnlyHybrid.addEventListener('click', () => {
+        const selectedRadioButton = document.querySelector('input[name="backend"]:checked') as HTMLInputElement
         console.log("Text Only Hybrid Inference.")
-        textOnlyInference(hybridModel);
+        if (selectedRadioButton.value == "googleai") {
+            console.log("Text Only Hybrid Inference Using Google AI Backend.")
+            textOnlyInference(googleAiHybridModel);
+        } else {
+            console.log("Text Only Hybrid Inference Using Vertex AI Backend.")
+            textOnlyInference(vertexAiHybridModel);
+        }
     });
 
     bTextAndImageOnDevice.addEventListener('click', () => {
+        const selectedRadioButton = document.querySelector('input[name="backend"]:checked') as HTMLInputElement
         console.log("Text And Image On Device Only Inference.")
-        textAndImageInference(onDeviceOnlyModel);
+        if (selectedRadioButton.value == "googleai") {
+            textAndImageInference(googleAiOnDeviceOnlyModel);
+        } else {
+            textAndImageInference(vertexAiOnDeviceOnlyModel);
+        }
     });
     bTextAndImageInCloud.addEventListener('click', () => {
-        console.log("Text And Image In Cloud Only Inference.")
-        textAndImageInference(inCloudOnlyModel);
+        const selectedRadioButton = document.querySelector('input[name="backend"]:checked') as HTMLInputElement
+        if (selectedRadioButton.value == "googleai") {
+            console.log("Text And Image In Cloud Only Inference Using Google AI Backend.")
+            textAndImageInference(googleAiInCloudOnlyModel);
+        } else {
+            console.log("Text And Image In Cloud Only Inference Using Vertex AI Backend.")
+            textAndImageInference(vertexAiInCloudOnlyModel);
+        }
     });
     bTextAndImageHybrid.addEventListener('click', () => {
-        console.log("Text And Image Hybrid Inference.")
-        textAndImageInference(hybridModel);
+        const selectedRadioButton = document.querySelector('input[name="backend"]:checked') as HTMLInputElement
+        console.log("Text Only Hybrid Inference.")
+        if (selectedRadioButton.value == "googleai") {
+            console.log("Text And Image Hybrid Inference Using Google AI Backend.")
+            textAndImageInference(googleAiHybridModel);
+        } else {
+            console.log("Text And Image Hybrid Inference Using Vertex AI Backend.")
+            textAndImageInference(vertexAiHybridModel);
+        }
     });
-
-
 });
 
 // Note: We are not exporting 'runInference' because this script is directly
