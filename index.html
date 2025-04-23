@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic TypeScript App</title>
+    <link rel="stylesheet" href="style.css"> </head>
+<body>
+
+    <h1>Firebase AI - Hybrid AI - Vertex API</h1>
+
+    <h2>Text Only Input</h2>
+    <div>
+        <label for="textOnlyInputField">Input Text:</label>
+        <input type="text" id="textOnlyInputField" placeholder="Enter text here...">
+    </div>
+
+    <div>
+        <button id="bTextOnlyOnDevice">Only On Device</button>
+        <button id="bTextOnlyInCloud">Only In Cloud</button>
+        <button id="bTextOnlyHybrid">Hybrid (Prefer On Device)</button>
+    </div>
+
+    <div>
+        <label for="textOnlyOutputArea">Output:</label>
+        <textarea id="textOnlyOutputArea" readonly placeholder="Output will appear here..."></textarea>
+    </div>
+
+    <h2>Text & Image Input</h2>
+    <img id="testImage" src="images/dog.jpg" alt="Description of the image">
+    <div>
+        <label for="textAndImageInputField">Input Text:</label>
+        <input type="text" id="textAndImageInputField" placeholder="Enter text here...">
+    </div>
+
+    <div>
+        <button id="bTextAndImageOnDevice">Only On Device</button>
+        <button id="bTextAndImageInCloud">Only In Cloud</button>
+        <button id="bTextAndImageHybrid">Hybrid (Prefer On Device)</button>
+    </div>
+
+    <div>
+        <label for="textAndImageOutputArea">Output:</label>
+        <textarea id="textAndImageOutputArea" readonly placeholder="Output will appear here..."></textarea>
+    </div>
+
+    <script type="module" src="dist/app.js" defer ></script>
+
+</body>
+</html>
