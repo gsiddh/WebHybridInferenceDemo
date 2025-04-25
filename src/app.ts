@@ -66,23 +66,58 @@ const googleAiHybridModel = getGenerativeModel(googleAI, {
 });
 
 
-async function textOnlyInference(model: GenerativeModel) {
+async function textOnlyInference(model: GenerativeModel, isStreaming: boolean = true) {
     const inputField = document.getElementById('textOnlyInputField') as HTMLInputElement;
     const outputField = document.getElementById('textOnlyOutputArea') as HTMLInputElement;
+    const timeLabel = document.getElementById('textOnlytimeLabel') as HTMLParagraphElement;
+    const characterCount = document.getElementById('textOnlyCharacterCount') as HTMLParagraphElement;
+    const wordCount = document.getElementById('textOnlyWordCount') as HTMLParagraphElement;
+    const wordsPerSecond = document.getElementById('textOnlyWordsPerSecond') as HTMLParagraphElement;
+    
+    timeLabel.textContent =`Time Taken ... ?`;
+    characterCount.textContent = `Character Count ... ?`;
+    wordCount.textContent = `Word Count ... ?`;
+    wordsPerSecond.textContent = `Words per second ... ?`;
     outputField.value = "";
 
     const txt = inputField.value;
 
     console.log("inference running for:", txt);
-    const inferenceRes = await model.generateContentStream(txt);
-    
-    for await (const chunk of inferenceRes.stream) {
-        outputField.value += chunk.text();
-        outputField.scrollTop = outputField.scrollHeight;   
+    const start = performance.now();
+
+    var end;
+    var outputLen;
+    if (isStreaming) {
+        const inferenceRes = await model.generateContentStream(txt);
+        // const inferenceRes = await model.generateContent(txt);
+        
+        for await (const chunk of inferenceRes.stream) {
+            outputField.value += chunk.text();
+            outputField.scrollTop = outputField.scrollHeight;   
+        }
+        end = performance.now(); 
+        outputLen = outputField.value.length;
+        outputField.value += "\n\n ------ Stream response completed ------ ";
+    } else {
+        const inferenceRes = await model.generateContent(txt);
+        end = performance.now(); 
+        outputLen = inferenceRes.response.text().length;
+        outputField.value = inferenceRes.response.text();
+
+        outputField.value += "\n\n ------ Non Streaming response completed ------ "; 
     }
 
-    outputField.value += "\n\n ------ Stream response completed ------ ";
     outputField.scrollTop = outputField.scrollHeight; 
+
+    
+    const words = outputField.value.trim().split(/\s+/);
+    const numWords = words.length;
+    const duration = (end - start) / 1000;
+    const wps = numWords / duration;
+    timeLabel.textContent = `Inference took ${duration.toFixed(2)} seconds`;
+    characterCount.textContent = `Character count is ${outputLen}`;
+    wordCount.textContent = `Num words is ${numWords}`;
+    wordsPerSecond.textContent = `Words per second are ${wps.toFixed(2)}`
 }
 
 // Converts a File object to a Part object.
@@ -140,6 +175,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const bTextOnlyOnDevice = document.getElementById('bTextOnlyOnDevice') as HTMLButtonElement;
     const bTextOnlyInCloud = document.getElementById('bTextOnlyInCloud') as HTMLButtonElement;
     const bTextOnlyHybrid = document.getElementById('bTextOnlyHybrid') as HTMLButtonElement;
+    const bTextOnlyOnDeviceNonStreaming = document.getElementById('bTextOnlyOnDeviceNonStreaming') as HTMLButtonElement;
+    const bTextOnlyInCloudNonStreaming = document.getElementById('bTextOnlyInCloudNonStreaming') as HTMLButtonElement;
 
     const bTextAndImageOnDevice = document.getElementById('bTextAndImageOnDevice') as HTMLButtonElement;
     const bTextAndImageInCloud = document.getElementById('bTextAndImageInCloud') as HTMLButtonElement;
@@ -174,6 +211,25 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             console.log("Text Only Hybrid Inference Using Vertex AI Backend.")
             textOnlyInference(vertexAiHybridModel);
+        }
+    });
+    bTextOnlyOnDeviceNonStreaming.addEventListener('click', () => {
+        const selectedRadioButton = document.querySelector('input[name="backend"]:checked') as HTMLInputElement
+        console.log("Text Only On Device Only Inference.")
+        if (selectedRadioButton.value == "googleai") {
+            textOnlyInference(googleAiOnDeviceOnlyModel, false);
+        } else {
+            textOnlyInference(vertexAiOnDeviceOnlyModel, false);
+        }
+    });
+    bTextOnlyInCloudNonStreaming.addEventListener('click', () => {
+        const selectedRadioButton = document.querySelector('input[name="backend"]:checked') as HTMLInputElement
+        if (selectedRadioButton.value == "googleai") {
+            console.log("Text Only In Cloud Only Inference Using Google AI Backend.")
+            textOnlyInference(googleAiInCloudOnlyModel, false);
+        } else {
+            console.log("Text Only In Cloud Only Inference Using Vertex AI Backend.")
+            textOnlyInference(vertexAiInCloudOnlyModel, false);
         }
     });
 
