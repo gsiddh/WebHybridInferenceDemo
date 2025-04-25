@@ -5,7 +5,7 @@
 For client development:
 
 1. run `npm install`
-2. Populate src/firebase-config.js with config from Firebase console:
+2. Populate src/firebase-config.ts with config from Firebase console:
 
    ```ts
    export const firebaseConfig = {
