@@ -22,10 +22,16 @@ const vertexAiInCloudOnlyModel = getGenerativeModel(vertexAI, {
 
 const vertexAiOnDeviceOnlyModel = getGenerativeModel(vertexAI, {
   mode: "only_on_device",
+  onDeviceParams: {
+    expectedInputs: [{ type: "image" }],
+  },
 });
 
 const vertexAiHybridModel = getGenerativeModel(vertexAI, {
   mode: "prefer_on_device",
+  onDeviceParams: {
+    expectedInputs: [{ type: "image" }],
+  },
 });
 
 // Initialize the GoogleAI
@@ -37,10 +43,16 @@ const googleAiInCloudOnlyModel = getGenerativeModel(googleAI, {
 
 const googleAiOnDeviceOnlyModel = getGenerativeModel(googleAI, {
   mode: "only_on_device",
+  onDeviceParams: {
+    expectedInputs: [{ type: "image" }],
+  },
 });
 
 const googleAiHybridModel = getGenerativeModel(googleAI, {
   mode: "prefer_on_device",
+  onDeviceParams: {
+    expectedInputs: [{ type: "image" }],
+  },
 });
 
 async function textOnlyInference(
