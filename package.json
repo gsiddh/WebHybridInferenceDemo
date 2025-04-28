@@ -19,6 +19,6 @@
     "vite": "^6.2.5"
   },
   "dependencies": {
-    "firebase": "11.6.0-eap-vertexai-hybgoog.abf0491ae"
+    "firebase": "^11.6.0-eap-vertexai-hybgoog.dc3794a2b"
   }
 }
